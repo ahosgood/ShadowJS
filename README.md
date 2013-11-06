@@ -9,33 +9,43 @@ window.Shadow and window.shdw objects created upon inclusion
 All functions and properties can be called from the window Shadow object using either Shadow.function() or shdw.function()
 
 **afterLast( strLastInstance String, strHaystack String, [blCaseSensitive Boolean] )**
+
 Gets the text after the last instance of a character
 
 **arrayToObject( arrRaw Array )**
+
 Converts a JavaScript array to a JavaScript object
 
 **base64Decode( strIn String )**
+
 Decodes a base64 encoded string
 
 **base64Encode( strIn String )**
+
 Encodes a string to base64
 
 **beforeFirst( strFirstInstance String, strHaystack String, [blCaseSensitive Boolean] )**
+
 Gets the text before the first instance of a character
 
 **cookieDelete( strName String )**
+
 Deletes a cookie from the browser
 
 **cookieGet( strName String )**
+
 Gets a cookies value from the browser
 
 **cookieSet( strName String, mxdData String, [intSecondsLife Number] )**
+
 Sets a cookie in the browser
 
 **contains( strNeedle String, strHaystack String, [blCaseSensitive Boolean] )**
+
 Checks for an instance of a string in another string (case sensitive), returns true if found, false if not
 
 **cssAnimations()**
+
 Checks for CSS animation support, returns true is support is found, false if not
 
 **dataSet( strName, mxdData, blPersistant )**
@@ -47,20 +57,25 @@ Checks for CSS animation support, returns true is support is found, false if not
 **dataClear()**
 
 **date( [mxdFormatUTC String/Boolean, [blUTC Boolean]] )**
+
 Returns a date as per the PHP date function
 
 **decimalise( fltIn Number )**
+
 Convert the last numbers of a float or integer to a 2-digit currency
 
 **dump( mxdIn Any, [blRenderIndents Boolean, [mxdIndent Number]] )**
+
 Dump a variable, similar to print_r() in PHP
 
 **endsWith( strNeedle, strHaystack, blCaseSensitive )**
 
 **fullScreen( jqoObject jQuery )**
+
 Requests full screen permissions for a jQuery element
 
 **getFileHeaders( strResource String, [funCallback Function] )**
+
 Gets the file headers for a local file
 
 **getHash( blIncludeHash )**
@@ -153,4 +168,4 @@ Gets the file headers for a local file
 
 **trim( strIn, strTrimChars )**
 
-**version( mxdCheckVersion )
+**version( mxdCheckVersion )**
