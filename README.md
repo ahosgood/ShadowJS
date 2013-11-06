@@ -1,5 +1,5 @@
 #Shadow JS
-=========
+
 Shadow JS provides you with all the JavaScript functionality that everyone else forgot to build
 
 ##Initialisation
