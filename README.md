@@ -60,15 +60,21 @@ Checks for CSS animation support, returns true is support is found, false if not
 
 Returns a date as per the PHP date function
 
+**debug()**
+
 **decimalise( fltIn Number )**
 
 Convert the last numbers of a float or integer to a 2-digit currency
+
+**degToRad( intDegrees Number )**
 
 **dump( mxdIn Any, [blRenderIndents Boolean, [mxdIndent Number]] )**
 
 Dump a variable, similar to print_r() in PHP
 
 **endsWith( strNeedle, strHaystack, blCaseSensitive )**
+
+**error()**
 
 **fullScreen( jqoObject jQuery )**
 
@@ -84,13 +90,15 @@ Gets the file headers for a local file
 
 **inArray( mxdNeedle, arrHaystack )**
 
-**iOS ()**
+**info()**
 
-**iPad ()**
+**iOS()**
 
-**iPod ()**
+**iPad()**
 
-**iPhone ()**
+**iPod()**
+
+**iPhone()**
 
 **isAlpha( mxdValue )**
 
@@ -156,6 +164,8 @@ Gets the file headers for a local file
 
 **prettyTime( intSeconds )**
 
+**radToDeg( intRadians Number )**
+
 **randomString( intStringLength, mxdExtendedChars )**
 
 **round( intNumber, intDP )**
@@ -169,3 +179,5 @@ Gets the file headers for a local file
 **trim( strIn, strTrimChars )**
 
 **version( mxdCheckVersion )**
+
+**warn()**
