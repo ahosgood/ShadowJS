@@ -3,13 +3,13 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.10.0
- * Date:        12/11/2013
+ * Version:     1.9.7
+ * Date:        24/10/2013
  * ================================================================================
  */
 
 (
-	function( screen, window, document ) {
+	function( window, document ) {
 		var Shadow = function() {
 				var objUnlistedKeyNames = {
 					    8: 'Backspace',
@@ -171,27 +171,6 @@
 							document.cookie = strName + '=' + mxdData +';expires=' + datNow.toUTCString() + ';path=' + strPath;
 						} else {
 							document.cookie = strName + '=' + mxdData +';path=' + strPath;
-						}
-					},
-				this.console = function() {
-						if( arguments.length > 1 ) {
-							var strType = arguments[0],
-							arrArguements = arguments[1];
-							if( this.isSet( window.console ) ) {
-								if( this.isSet( window.console[strType] ) ) {
-									var funConsole = window.console[strType];
-									if( this.inArray( typeof arrArguements, ['array', 'object'] )
-											&& arrArguements.length > 0 ) {
-										for( var intArguement in arrArguements ) {
-											funConsole( arrArguements[intArguement] );
-										}
-									} else {
-										funConsole( arrArguements );
-									}
-								} else {
-									this.log( arrArguements );
-								}
-							}
 						}
 					},
 				this.contains = function( strNeedle, strHaystack, blCaseSensitive ) {
@@ -457,13 +436,6 @@
 							return objTime;
 						}
 					},
-				this.debug = function() {
-						if( arguments.length > 0 ) {
-							for( var intArguement in arguments ) {
-								this.console( 'debug', arguments[intArguement] );
-							}
-						}
-					},
 				this.decimalise = function( fltIn ) {
 						var strRounded = this.round( fltIn, 2 ).toString();
 						if( this.contains( '.', strRounded ) ) {
@@ -474,9 +446,6 @@
 						} else {
 							return strRounded + '.00';
 						}
-					},
-				this.degToRad = function( intDegrees ) {
-						return intDegrees * ( Math.PI / 180 );
 					},
 				this.dump = function( mxdIn, blRenderIndents, intIndent ) {
 						var blRenderIndents = typeof blRenderIndents === 'boolean' ? blRenderIndents : false;
@@ -562,15 +531,6 @@
 							return new RegExp( strNeedle + '$', 'i' ).test( strHaystack );
 						}
 					},
-				this.error = function() {
-						if( this.isSet( window.console )
-								&& this.isSet( window.console.error )
-								&& arguments.length > 0 ) {
-							for( var intArguement in arguments ) {
-								window.console.error( arguments[intArguement] );
-							}
-						}
-					},
 				this.fullScreen = function( jqoObject ) {
 						if( jqoObject[0].requestFullScreen ) {
 							jqoObject[0].requestFullScreen();
@@ -629,13 +589,6 @@
 							}
 						}
 						return blMatch;
-					},
-				this.info = function() {
-						if( arguments.length > 0 ) {
-							for( var intArguement in arguments ) {
-								this.console( 'info', arguments[intArguement] );
-							}
-						}
 					},
 				this.iOS = function () {
 						var blResult = this.iPad() || this.iPod() || this.iPhone();
@@ -765,13 +718,63 @@
 						return strIn.replace( new RegExp( '^[' + ( ( typeof strTrimChars !== 'string' || strTrimChars === '' ) ? ' ' : strTrimChars ) + ']+' ), '' );
 					},
 				this.moderniseInputs = function( blPlaceholders, funCallback ) {
+						//TODO: Support for textarea and select
 						funCallback = ( typeof funCallback === 'function' ) ? funCallback : ( ( typeof blPlaceholders === 'function' ) ? blPlaceholders : function() {} );
 						blPlaceholders = ( typeof blPlaceholders === 'boolean' ) ? blPlaceholders : true;
 						var blYeOldieBrowser = this.oldie();
-						var arrInputs = ['text', 'hidden', 'password', 'button', 'reset', 'submit', 'checkbox', 'radio', 'email', 'number', 'tel', 'url', 'range', 'search', 'file', 'color', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local'];
+						var arrInputs = new Array( 'text', 'hidden', 'password', 'button', 'reset', 'submit', 'checkbox', 'radio', 'email', 'number', 'tel', 'url', 'range', 'search', 'file', 'color', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local' );
+						var arrInputAttrs = new Array( 'required', 'readonly', 'required', 'disabled' );
 						for( var intInput in arrInputs ) {
 							var strInput = arrInputs[intInput];
 							$( 'input[type="' + strInput + '"]:not(.input-' + strInput + ')' ).addClass( 'input-' + strInput );
+						}
+						for( var intInputAttr in arrInputAttrs ) {
+							var strInputAttr = arrInputAttrs[intInputAttr];
+							$( 'input[' + strInputAttr + ']:not(.input-' + strInputAttr + ')' ).addClass( 'input-' + strInputAttr );
+						}
+						if( typeof document.createElement( 'input' ).checkValidity !== 'function' ) {
+							//$( 'input[type="email"], input[type="url"], input[type="number"], input[type="color"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime"], input[type="datetime-local"]' ).not( '.input-html5' ).on( 'ready focus keyup change blur',
+							$( 'input[type="email"], input[type="url"], input[type="number"]' ).not( '.input-html5' ).on( 'ready focus keyup change blur',
+									function() {
+										var jqoInput = $( this );
+										/*jqoInput.removeClass( 'input-invalid' );
+										 if( jqoInput.is( ':invalid' ) ) {
+										    jqoInput.addClass( 'input-invalid' );
+										 }*/
+										var blValid = true;
+										var validator = jqoInput.prop( 'type' );
+										var blRequired = !jqoInput.prop( 'required' ) == null;
+										switch( validator ){
+											case 'email':
+												blValid = this.isEmail( jqoInput.val() );
+												break;
+
+											case 'url':
+												blValid = this.isUrl( jqoInput.val() );
+												break;
+
+											case 'number':
+												blValid = this.isNumber( jqoInput.val() );
+												break;
+										}
+										if( blValid
+												&& blRequired
+												&& jqoInput.val().replace( jqoInput.attr( 'placeholder' ), '' ) === '' ) {
+											blValid = false;
+										}
+										if( blValid
+												|| ( !blRequired
+												&& jqoInput.val() === '' ) ) {
+											jqoInput.removeClass( 'input-invalid' );
+											jqoInput.addClass( 'input-valid' );
+											return true;
+										} else {
+											jqoInput.removeClass( 'input-valid' );
+											jqoInput.addClass( 'input-invalid' );
+											return false;
+										}
+									}
+							).addClass( 'input-html5' );
 						}
 						if( blYeOldieBrowser
 								&& blPlaceholders ) {
@@ -779,20 +782,23 @@
 								function() {
 									var jqoInput = $( this );
 									var strPlaceholder = jqoInput.attr( 'placeholder' );
-									if( jqoInput.val() == '' ) {
+									if( jqoInput.val() == ''
+											&& blYeOldieBrowser ) {
 										jqoInput.val( strPlaceholder );
 										jqoInput.addClass( 'placeholder' );
 									}
 									jqoInput.focus(
 										function() {
 											$( this ).removeClass( 'placeholder' );
-											if( jqoInput.val() == strPlaceholder ) {
+											if( blYeOldieBrowser
+													&& jqoInput.val() == strPlaceholder ) {
 												jqoInput.val( '' );
 											}
 										}
 									).blur(
 										function() {
-											if( blYeOldieBrowser ) {
+											if( jqoInput.val() == ''
+													&& blYeOldieBrowser ) {
 												jqoInput.val( strPlaceholder );
 												$( this ).addClass( 'placeholder' );
 											}
@@ -877,20 +883,6 @@
 				this.pixelDensity = function() {
 						return this.isNumber( window.devicePixelRatio ) ? window.devicePixelRatio : 1;
 					},
-				this.ppi = function( fltDisplaySize ) {
-					/*var intPixelDensity = this.pixelDensity(),
-					intScreenWidth = screen.width * intPixelDensity,
-					intScreenHeight = screen.height * intPixelDensity,
-					fltDiagPixels = Math.sqrt( Math.pow( intScreenWidth, 2 ) + Math.pow( intScreenHeight, 2 ) ),
-					fltRadFromHoriz = Math.acos( ( Math.pow( intScreenWidth, 2 ) + Math.pow( fltDiagPixels, 2 ) - Math.pow( intScreenHeight, 2 ) ) / ( 2 * fltDiagPixels * intScreenWidth ) ),
-					intScreenPysicalHeight = fltDisplaySize * Math.sin( fltRadFromHoriz );
-					return intScreenHeight / intScreenPysicalHeight;*/
-					var intPixelDensity = this.pixelDensity(),
-					intScreenWidth = screen.width * intPixelDensity,
-					intScreenHeight = screen.height * intPixelDensity,
-					fltDiagPixels = Math.sqrt( Math.pow( intScreenWidth, 2 ) + Math.pow( intScreenHeight, 2 ) );
-					return intScreenHeight / fltDisplaySize * Math.sin( Math.acos( ( Math.pow( intScreenWidth, 2 ) + Math.pow( fltDiagPixels, 2 ) - Math.pow( intScreenHeight, 2 ) ) / ( 2 * fltDiagPixels * intScreenWidth ) ) );
-				},
 				this.prettySize = function( intBytes, blUseSpace ) {
 						var arrLimits = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 						var intLimit = 0;
@@ -920,9 +912,6 @@
 							}
 						}
 						return strUptime + intSeconds + ' seconds';
-					},
-				this.radToDeg = function( intRadians ) {
-						return intRadians * ( 180 / Math.PI );
 					},
 				this.randomString = function( intStringLength, mxdExtendedChars ) {
 						intStringLength = this.isSet( intStringLength ) && this.isInt( intStringLength ) ? intStringLength : 16;
@@ -965,7 +954,7 @@
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
 					},
 				this.version = function( mxdCheckVersion ) {
-						var arrThisVersion = [1, 10, 0];
+						var arrThisVersion = [1, 9, 7];
 						if( this.isSet( mxdCheckVersion ) ) {
 							if( typeof mxdCheckVersion === 'boolean' ) {
 								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
@@ -985,13 +974,6 @@
 						} else {
 							return arrThisVersion.join( '.' );
 						}
-					},
-				this.warn = function() {
-						if( arguments.length > 0 ) {
-							for( var intArguement in arguments ) {
-								this.console( 'warn', arguments[intArguement] );
-							}
-						}
 					};
 
 				return this;
@@ -1008,4 +990,4 @@
 			window.shdw = window.Shadow;
 		}
 	}
-)( screen, window, document );
+)( window, document );
