@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.10.0
- * Date:        12/11/2013
+ * Version:     1.10.1
+ * Date:        19/11/2013
  * ================================================================================
  */
 
@@ -764,6 +764,9 @@
 				this.ltrim = function( strIn, strTrimChars ) {
 						return strIn.replace( new RegExp( '^[' + ( ( typeof strTrimChars !== 'string' || strTrimChars === '' ) ? ' ' : strTrimChars ) + ']+' ), '' );
 					},
+				this.microtime = function() {
+						return parseInt( this.date( 'U' ) + this.padLeft( this.date( 'u' ), 4, '0' ) );
+					},
 				this.moderniseInputs = function( blPlaceholders, funCallback ) {
 						funCallback = ( typeof funCallback === 'function' ) ? funCallback : ( ( typeof blPlaceholders === 'function' ) ? blPlaceholders : function() {} );
 						blPlaceholders = ( typeof blPlaceholders === 'boolean' ) ? blPlaceholders : true;
@@ -965,7 +968,7 @@
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
 					},
 				this.version = function( mxdCheckVersion ) {
-						var arrThisVersion = [1, 10, 0];
+						var arrThisVersion = [1, 10, 1];
 						if( this.isSet( mxdCheckVersion ) ) {
 							if( typeof mxdCheckVersion === 'boolean' ) {
 								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
