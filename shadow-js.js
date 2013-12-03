@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.10.1
- * Date:        19/11/2013
+ * Version:     1.10.3
+ * Date:        03/12/2013
  * ================================================================================
  */
 
@@ -611,12 +611,21 @@
 					},
 				this.ie = function( mxdVersion ) {
 						var strUserAgent = navigator.userAgent,
-						intMSIEOffset = strUserAgent.indexOf( 'MSIE ' );
-						if( ( this.isSet( mxdVersion )
-									&& mxdVersion == parseFloat( strUserAgent.substring( intMSIEOffset + 5, strUserAgent.indexOf( ';', intMSIEOffset ) ) ) )
-								|| ( !this.isSet( mxdVersion )
-									&& intMSIEOffset !== -1 ) ) {
-							return ( intMSIEOffset === -1 ) ? false : parseFloat( strUserAgent.substring( intMSIEOffset + 5, strUserAgent.indexOf( ';', intMSIEOffset ) ) );
+						intMSIEOffset = strUserAgent.indexOf( 'MSIE ' ),
+						intRVOffset = strUserAgent.indexOf( 'rv:' ),
+						intVersion = -1;
+						if( intMSIEOffset !== -1 ) {
+							intVersion = parseInt( this.beforeFirst( ';', strUserAgent.substr( intMSIEOffset + 5 ) ) );
+						} else if( intRVOffset !== -1
+								&& this.contains( 'Trident', strUserAgent ) ) {
+							intVersion = parseInt( this.beforeFirst( ')', strUserAgent.substr( intRVOffset + 3 ) ) );
+						}
+						if( intVersion !== -1
+								&& ( ( this.isSet( mxdVersion )
+										&& this.isNumber( mxdVersion )
+										&& mxdVersion == intVersion )
+									|| !this.isSet( mxdVersion ) ) ) {
+							return intVersion;
 						} else {
 							return false;
 						}
@@ -765,7 +774,8 @@
 						return strIn.replace( new RegExp( '^[' + ( ( typeof strTrimChars !== 'string' || strTrimChars === '' ) ? ' ' : strTrimChars ) + ']+' ), '' );
 					},
 				this.microtime = function() {
-						return parseInt( this.date( 'U' ) + this.padLeft( this.date( 'u' ), 4, '0' ) );
+						var datNow = new Date();
+						return parseInt( datNow.getTime() );
 					},
 				this.moderniseInputs = function( blPlaceholders, funCallback ) {
 						funCallback = ( typeof funCallback === 'function' ) ? funCallback : ( ( typeof blPlaceholders === 'function' ) ? blPlaceholders : function() {} );
@@ -968,7 +978,7 @@
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
 					},
 				this.version = function( mxdCheckVersion ) {
-						var arrThisVersion = [1, 10, 1];
+						var arrThisVersion = [1, 10, 3];
 						if( this.isSet( mxdCheckVersion ) ) {
 							if( typeof mxdCheckVersion === 'boolean' ) {
 								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
