@@ -3,40 +3,14 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.10.3
- * Date:        03/12/2013
+ * Version:     1.10.4
+ * Date:        15/12/2013
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
-				var objUnlistedKeyNames = {
-					    8: 'Backspace',
-					    13: 'Return',
-					    16: 'Shift',
-					    17: 'Ctrl',
-					    18: 'Alt',
-					    19: 'F15',
-					    27: 'Escape',
-					    32: 'Space',
-					    44: 'F13',
-					    112: 'F1',
-					    113: 'F2',
-					    114: 'F3',
-					    115: 'F4',
-					    116: 'F5',
-					    117: 'F6',
-					    118: 'F7',
-					    119: 'F8',
-					    120: 'F9',
-					    121: 'F10',
-					    122: 'F11',
-					    123: 'F12',
-					    145: 'F14',
-					    224: 'Cmd'
-					};
-
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
 						if( ( typeof blCaseSensitive === 'boolean' )
 								&& blCaseSensitive ) {
@@ -478,82 +452,6 @@
 				this.degToRad = function( intDegrees ) {
 						return intDegrees * ( Math.PI / 180 );
 					},
-				this.dump = function( mxdIn, blRenderIndents, intIndent ) {
-						var blRenderIndents = typeof blRenderIndents === 'boolean' ? blRenderIndents : false;
-						if( Object.prototype.toString.call( mxdIn ) === '[object Function]'
-								|| Object.prototype.toString.call( mxdIn ) === '[object Number]'
-								|| Object.prototype.toString.call( mxdIn ) === '[object Boolean]'
-								|| Object.prototype.toString.call( mxdIn ) === '[object Null]'
-								|| Object.prototype.toString.call( mxdIn ) === '[object Undefined]' ) {
-							return mxdIn.toString();
-						} else {
-							if( this.isSet( JSON )
-									&& this.isSet( JSON.stringify )
-									&& !blRenderIndents ) {
-								return JSON.stringify( mxdIn );
-							} else {
-								intIndent = this.isInt( intIndent ) ? intIndent : 0;
-								var strSingleIndent = '&nbsp;&nbsp;&nbsp;&nbsp;';
-								var strIndent = ( new Array( intIndent + 1 ) ).join( strSingleIndent );
-								var strNextIndent = ( new Array( intIndent + 2 ) ).join( strSingleIndent );
-								var strOut = '';
-								shdw.dump( Object.prototype.toString.call( mxdIn ) );
-								if( Object.prototype.toString.call( mxdIn ) === '[object Array]' ) {
-									strOut += '[\n';
-									if( mxdIn.length ) {
-										for( var i in mxdIn ) {
-											if( Object.prototype.toString.call( mxdIn[i] ) === '[object Array]'
-													|| Object.prototype.toString.call( mxdIn[i] ) === '[object Object]' ) {
-												strOut += strNextIndent + this.dump( mxdIn[i], blRenderIndents, intIndent + 1 );
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Function]' ) {
-												strOut += strNextIndent + mxdIn[i].toString() + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Number]' ) {
-												strOut += strNextIndent + mxdIn[i] + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Boolean]' ) {
-												strOut += strNextIndent + ( mxdIn[i] ? 'TRUE' : 'FALSE' ) + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Null]' ) {
-												strOut += strNextIndent + 'NULL,\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Undefined]' ) {
-												strOut += strNextIndent + 'UNDEFINED,\n';
-											} else {
-												strOut += strNextIndent + '"' + mxdIn[i].toString() + '",\n';
-											}
-										}
-										strOut = strOut.substring( 0, strOut.length - 2 ) + '\n';
-									}
-									strOut += strIndent + '],\n';
-								} else if( Object.prototype.toString.call( mxdIn ) === '[object Object]' ) {
-									strOut += '{\n';
-									if( this.objectLength( mxdIn ) ) {
-										for( var i in mxdIn ) {
-											strOut += strNextIndent + i + ': ';
-											if( Object.prototype.toString.call( mxdIn[i] ) === '[object Array]'
-													|| Object.prototype.toString.call( mxdIn[i] ) === '[object Object]' ) {
-												strOut += this.dump( mxdIn[i], blRenderIndents, intIndent + 1 );
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Function]' ) {
-												strOut += mxdIn[i].toString() + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Number]' ) {
-												strOut += mxdIn[i] + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Boolean]' ) {
-												strOut += ( mxdIn[i] ? 'TRUE' : 'FALSE' ) + ',\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Null]' ) {
-												strOut += 'NULL,\n';
-											} else if( Object.prototype.toString.call( mxdIn[i] ) === '[object Undefined]' ) {
-												strOut += 'UNDEFINED,\n';
-											} else {
-												strOut += '"' + mxdIn[i].toString() + '",\n';
-											}
-										}
-										strOut = strOut.substring( 0, strOut.length - 2 ) + '\n';
-									}
-									strOut += strIndent + '},\n';
-								} else {
-									strOut += strNextIndent + '"' + mxdIn.toString() + '",\n';
-								}
-								return intIndent === 0 ? strOut.substring( 0, strOut.length - 2 ) : strOut;
-							}
-						}
-					},
 				this.endsWith = function( strNeedle, strHaystack, blCaseSensitive ) {
 						blCaseSensitive = ( typeof blCaseSensitive === 'boolean' ) ? blCaseSensitive : false;
 						if( blCaseSensitive ) {
@@ -718,7 +616,6 @@
 						return ( /^([0-9][0-9]?|(1[0-9]{2})|(2([0-4][0-9]|5[0-5])))(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){3}$/ ).test( mxdValue );
 					},
 				this.isLocalIPV4 = function( mxdValue ) {
-						//return ( /^10(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){3}$/ ).test( mxdValue ) || ( /^172\.(1[6-9]|2[0-9]|3[0-1])(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}$/ ).test( mxdValue ) || ( /^192\.168(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}$/ ).test( mxdValue );
 						return ( /^10(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){3}|172\.(1[6-9]|2[0-9]|3[0-1])(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}|192\.168(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}$/ ).test( mxdValue );
 					},
 				this.isIPV6 = function( mxdValue ) {
@@ -862,6 +759,31 @@
 						}
 						return intLength;
 					},
+				this.objUnlistedKeyNames = {
+						8: 'Backspace',
+						13: 'Return',
+						16: 'Shift',
+						17: 'Ctrl',
+						18: 'Alt',
+						19: 'F15',
+						27: 'Escape',
+						32: 'Space',
+						44: 'F13',
+						112: 'F1',
+						113: 'F2',
+						114: 'F3',
+						115: 'F4',
+						116: 'F5',
+						117: 'F6',
+						118: 'F7',
+						119: 'F8',
+						120: 'F9',
+						121: 'F10',
+						122: 'F11',
+						123: 'F12',
+						145: 'F14',
+						224: 'Cmd'
+					},
 				this.oldie = function() {
 						var blResult = this.ie( 6 ) || this.ie( 7 ) || this.ie( 8 );
 						this.oldie = blResult ? function() { return true; } : function() { return false; };
@@ -891,13 +813,6 @@
 						return this.isNumber( window.devicePixelRatio ) ? window.devicePixelRatio : 1;
 					},
 				this.ppi = function( fltDisplaySize ) {
-					/*var intPixelDensity = this.pixelDensity(),
-					intScreenWidth = screen.width * intPixelDensity,
-					intScreenHeight = screen.height * intPixelDensity,
-					fltDiagPixels = Math.sqrt( Math.pow( intScreenWidth, 2 ) + Math.pow( intScreenHeight, 2 ) ),
-					fltRadFromHoriz = Math.acos( ( Math.pow( intScreenWidth, 2 ) + Math.pow( fltDiagPixels, 2 ) - Math.pow( intScreenHeight, 2 ) ) / ( 2 * fltDiagPixels * intScreenWidth ) ),
-					intScreenPysicalHeight = fltDisplaySize * Math.sin( fltRadFromHoriz );
-					return intScreenHeight / intScreenPysicalHeight;*/
 					var intPixelDensity = this.pixelDensity(),
 					intScreenWidth = screen.width * intPixelDensity,
 					intScreenHeight = screen.height * intPixelDensity,
@@ -978,7 +893,7 @@
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
 					},
 				this.version = function( mxdCheckVersion ) {
-						var arrThisVersion = [1, 10, 3];
+						var arrThisVersion = [1, 10, 4];
 						if( this.isSet( mxdCheckVersion ) ) {
 							if( typeof mxdCheckVersion === 'boolean' ) {
 								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
@@ -1017,6 +932,7 @@
 		window.onblur = function() {
 				window.Shadow.blWindowFocused = false;
 			};
+
 		if( !window.shdw ) {
 			window.shdw = window.Shadow;
 		}
