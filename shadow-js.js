@@ -3,14 +3,18 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.10.4
- * Date:        15/12/2013
+ * Version:     1.11.0
+ * Date:        17/12/2013
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
+				var arrThisVersion = [1, 11, 0],
+				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+				blWindowFocused = false,
+				intYearDays = 356.2425;
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
 						if( ( typeof blCaseSensitive === 'boolean' )
 								&& blCaseSensitive ) {
@@ -30,7 +34,6 @@
 						}
 						return objReturn;
 					},
-				this.base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				this.base64Decode = function( strIn ) {
 						if( this.isSet( window.atob ) ) {
 							return decodeURIComponent( window.atob( strIn ) );
@@ -54,10 +57,10 @@
 							}
 							strIn += '';
 							do {
-								strHextet1 = this.base64String.indexOf( strIn.charAt( intChar++ ) );
-								strHextet2 = this.base64String.indexOf( strIn.charAt( intChar++ ) );
-								strHextet3 = this.base64String.indexOf( strIn.charAt( intChar++ ) );
-								strHextet4 = this.base64String.indexOf( strIn.charAt( intChar++ ) );
+								strHextet1 = base64String.indexOf( strIn.charAt( intChar++ ) );
+								strHextet2 = base64String.indexOf( strIn.charAt( intChar++ ) );
+								strHextet3 = base64String.indexOf( strIn.charAt( intChar++ ) );
+								strHextet4 = base64String.indexOf( strIn.charAt( intChar++ ) );
 								intBits = strHextet1 << 18 | strHextet2 << 12 | strHextet3 << 6 | strHextet4;
 								strOctet1 = intBits >> 16 & 0xff;
 								strOctet2 = intBits >> 8 & 0xff;
@@ -102,7 +105,7 @@
 								strHextet2 = intBits >> 12 & 0x3f;
 								strHextet3 = intBits >> 6 & 0x3f;
 								strHextet4 = intBits & 0x3f;
-								arrOut[intOutChar++] = this.base64String.charAt( strHextet1 ) + this.base64String.charAt( strHextet2 ) + this.base64String.charAt( strHextet3 ) + this.base64String.charAt( strHextet4 );
+								arrOut[intOutChar++] = base64String.charAt( strHextet1 ) + base64String.charAt( strHextet2 ) + base64String.charAt( strHextet3 ) + base64String.charAt( strHextet4 );
 							} while( intChar < strIn.length );
 							strOut = arrOut.join( '' );
 						}
@@ -117,14 +120,13 @@
 						var intIndex = strHaystack.indexOf( strFirstInstance );
 						return ( intIndex > 0 ) ? strHaystack.slice( 0, intIndex ) : '';
 					},
-				this.blWindowFocused = false,
 				this.cookieDelete = function( strName ) {
 						var datNow = new Date();
 						datNow.setTime( datNow.getTime() - 1000 );
 						document.cookie = strName + '=;expires=' + datNow.toUTCString() + ';path=/';
 					},
 				this.cookieGet = function( strName ) {
-						var strName = strName + "=",
+						strName = strName + "=",
 						arrData = document.cookie.split( ';' );
 						for( var intCharacter = 0, intDataLength = arrData.length; intCharacter < intDataLength; intCharacter++ ) {
 							var strData = arrData[intCharacter];
@@ -203,9 +205,9 @@
 							blPersistant = true;
 						}
 						if( ( blPersistant
-								&& localStorage )
+									&& localStorage )
 								|| ( !blPersistant
-								&& sessionStorage ) ) {
+									&& sessionStorage ) ) {
 							try {
 								if( blPersistant ) {
 									localStorage.setItem( strName, mxdData );
@@ -642,7 +644,7 @@
 						return blResult;
 					},
 				this.isWindowFocused = function() {
-						return this.blWindowFocused;
+						return blWindowFocused;
 					},
 				this.keyCodeName = function( e ) {
 						e = e ? e : window.event;
@@ -819,6 +821,38 @@
 					fltDiagPixels = Math.sqrt( Math.pow( intScreenWidth, 2 ) + Math.pow( intScreenHeight, 2 ) );
 					return intScreenHeight / fltDisplaySize * Math.sin( Math.acos( ( Math.pow( intScreenWidth, 2 ) + Math.pow( fltDiagPixels, 2 ) - Math.pow( intScreenHeight, 2 ) ) / ( 2 * fltDiagPixels * intScreenWidth ) ) );
 				},
+				this.prettyAge = function( intUnixSeconds ) {
+						var intSecondsDifference = parseInt( this.date( 'U' ) ) - intUnixSeconds,
+						blFuture = ( intSecondsDifference < 0 ),
+						intMonthSeconds = ( intYearDays / 12 ) * 86400;
+						intSecondsDifference = Math.abs( intSecondsDifference );
+						var strOut = '';
+						if( intSecondsDifference < 60 ) {
+							return blFuture ? 'In a moment' : 'A moment ago';
+						} else if( intSecondsDifference < 120 ) {
+							return ( blFuture ) ? 'In an minute' : 'A minute ago';
+						} else if( intSecondsDifference < 3600 ) {
+							strOut = Math.floor( intSecondsDifference / 60 ) + ' minutes';
+						} else if( intSecondsDifference < 7200 ) {
+							return ( blFuture ) ? 'In an hour' : 'An hour ago';
+						} else if( intSecondsDifference < 86400 ) {
+							strOut = Math.floor( intSecondsDifference / 3600 ) + ' hours';
+						} else if( intSecondsDifference < 172800 ) {
+							return ( blFuture ) ? 'Tomorrow' : 'Yesterday';
+						} else if( intSecondsDifference < intMonthSeconds ) {
+							strOut = Math.floor( intSecondsDifference / 86400 ) + ' days';
+						} else if( intSecondsDifference < intMonthSeconds * 2 ) {
+							return ( blFuture ) ? 'In a month' : 'A month ago';
+						} else if( intSecondsDifference < intYearDays * 86400 ) {
+							strOut = Math.floor( intSecondsDifference / intMonthSeconds ) + ' months';
+						} else if( intSecondsDifference < intYearDays * 86400 * 2 ) {
+							return ( blFuture ) ? 'In a year' : 'A year ago';
+						} else {
+							strOut = Math.floor( intSecondsDifference / ( intYearDays * 86400 ) ) + ' years';
+						}
+
+						return ( blFuture ) ? 'In ' + strOut : strOut + ' ago';
+					},
 				this.prettySize = function( intBytes, blUseSpace ) {
 						var arrLimits = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 						var intLimit = 0;
@@ -829,22 +863,15 @@
 						return this.round( intBytes / Math.pow( 1024, intLimit ), 2 ) + ( typeof blUseSpace === 'boolean' && blUseSpace ? ' ' : '' ) + arrLimits[intLimit];
 					},
 				this.prettyTime = function( intSeconds ) {
-						var strUptime = '';
-						var fltYearDays = 356.2425;
-						var objLimits = {
-								year: fltYearDays * 86400,
-								month: ( fltYearDays / 84 ) * 604800,
-								week: 604800,
-								day: 86400,
-								hour: 3600,
-								minute: 60
-							};
-						for( var strLimit in objLimits ) {
-							if( intSeconds >= objLimits[strLimit] ) {
-								strUptime += Math.floor( intSeconds / objLimits[strLimit] ) + ' ' + strLimit + ( ( Math.floor( intSeconds / objLimits[strLimit] ) === 1 ) ? '' : 's' ) + ' ';
-								intSeconds -= Math.floor( intSeconds / objLimits[strLimit] ) * objLimits[strLimit];
+						var strUptime = '',
+						arrLimits = [fltYearDays * 86400, ( fltYearDays / 84 ) * 604800, 604800, 86400, 3600, 60],
+						arrLimitLabels = ['year','month','week','day','hour','minute'];
+						for( var intLimitIndex in arrLimits ) {
+							if( intSeconds >= arrLimits[intLimitIndex] ) {
+								strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + ' ' + arrLimitLabels[intLimitIndex] + ( ( Math.floor( intSeconds / arrLimits[intLimitIndex] ) === 1 ) ? '' : 's' ) + ' ';
+								intSeconds -= Math.floor( intSeconds / arrLimits[intLimitIndex] ) * arrLimits[intLimitIndex];
 							} else if( strUptime !== '' ) {
-								strUptime += '0 ' + strLimit + 's ';
+								strUptime += '0 ' + arrLimitLabels[intLimitIndex] + 's ';
 							}
 						}
 						return strUptime + intSeconds + ' seconds';
@@ -854,13 +881,13 @@
 					},
 				this.randomString = function( intStringLength, mxdExtendedChars ) {
 						intStringLength = this.isSet( intStringLength ) && this.isInt( intStringLength ) ? intStringLength : 16;
-						var strChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+						var strChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz',
+						strRandomString = '';
 						if( typeof mxdExtendedChars === 'string' ) {
 							strChars = mxdExtendedChars;
 						} else if( mxdExtendedChars === true ) {
 							strChars += '!@£$%^&*()_-=+[]{};:|<>?/';
 						}
-						var strRandomString = '';
 						for( var intChar = 0; intChar < intStringLength; intChar++ ) {
 							var intRand = Math.floor( Math.random() * strChars.length );
 							strRandomString += strChars.substring( intRand, intRand + 1 );
@@ -893,7 +920,6 @@
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
 					},
 				this.version = function( mxdCheckVersion ) {
-						var arrThisVersion = [1, 10, 4];
 						if( this.isSet( mxdCheckVersion ) ) {
 							if( typeof mxdCheckVersion === 'boolean' ) {
 								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
@@ -927,10 +953,10 @@
 
 		window.Shadow = new Shadow;
 		window.onfocus = function() {
-				window.Shadow.blWindowFocused = true;
+				blWindowFocused = true;
 			},
 		window.onblur = function() {
-				window.Shadow.blWindowFocused = false;
+				blWindowFocused = false;
 			};
 
 		if( !window.shdw ) {
