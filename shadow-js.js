@@ -3,15 +3,15 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.11.0
- * Date:        17/12/2013
+ * Version:     1.11.1
+ * Date:        23/12/2013
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
-				var arrThisVersion = [1, 11, 0],
+				var arrThisVersion = [1, 11, 1],
 				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				blWindowFocused = false,
 				intYearDays = 356.2425;
@@ -599,6 +599,10 @@
 						}
 						return false;
 					},
+				this.isDomain = function( mxdValue ) {
+						//return ( /^https?:\/\/([a-z0-9][a-z0-9\-]*(?:\.[A-Z0-9][A-Z0-9\-]*)+)\/?/i ).test(  mxdValue );
+						return ( /^(https?:\/\/)?([a-z0-9][a-z0-9\-]*)(.[a-z0-9]{2,}[a-z0-9\-]*)+\/?$/i ).test(  mxdValue );
+					},
 				this.isEmail = function( mxdValue ) {
 						return ( /^([a-z0-9])(([-a-z0-9._])*([a-z0-9]))*\@([a-z0-9])(([a-z0-9-])*([a-z0-9]))+(\.([a-z0-9])([-a-z0-9_-])?([a-z0-9])+)+$/ ).test( mxdValue );
 					},
@@ -636,7 +640,8 @@
 						return mxdValue !== null && mxdValue !== undefined && typeof mxdValue !== 'null' && typeof mxdValue !== 'undefined' && mxdValue !== 'undefined';
 					},
 				this.isUrl = function( mxdValue ) {
-						return ( /^(http|https|ftp):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i ).test(  mxdValue );
+						//return ( /^(https?|s?ftp):\/\/([a-z0-9][a-z0-9\-]*(?:\.[A-Z0-9][A-Z0-9\-]*)+):?(\d+)?\/?/i ).test(  mxdValue );
+						return ( /^(https?|s?ftp):\/\/([a-z0-9][a-z0-9\-]*)(.[a-z0-9]{2,}[a-z0-9\-]*)+(:\d+)?\/?([a-z0-9_\-\.\?\=\&\%\+\/\|\'\"\[\]]*)$/i ).test(  mxdValue );
 					},
 				this.isWebkit = function() {
 						var blResult = this.contains( 'AppleWebKit', navigator.userAgent );
