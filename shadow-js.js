@@ -3,15 +3,15 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.11.1
- * Date:        23/12/2013
+ * Version:     1.12.0
+ * Date:        03/02/2014
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
-				var arrThisVersion = [1, 11, 1],
+				var arrThisVersion = [1, 12, 0],
 				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				blWindowFocused = false,
 				intYearDays = 356.2425;
@@ -252,16 +252,8 @@
 							sessionStorage.clear();
 						}
 					},
-				this.date = function( mxdFormatUTC, blUTC ) {
-						var strFormat;
-						if( typeof mxdFormatUTC === 'boolean' ) {
-							blUTC = mxdFormatUTC;
-						} else if( typeof mxdFormatUTC === 'string' ) {
-							strFormat = mxdFormatUTC;
-							if( typeof blUTC !== 'boolean' ) {
-								blUTC = false;
-							}
-						}
+				this.date = function( strFormat ) {
+						strFormat = ( typeof strFormat === 'string' ) ? strFormat : '';
 						var datNow = new Date(),
 						objNames = {
 								days: {
@@ -371,34 +363,7 @@
 						objTime.a = ( objTime.G < 12 ) ? 'am' : 'pm',
 						objTime.A = objTime.a.toUpperCase(),
 						objTime.L = ( objTime.Y % 4 === 0 && ( ( objTime.Y % 100 === 0 && objTime.Y % 400 === 0 ) || objTime.Y % 100 !== 0 ) ) ? 1 : 0;
-						if( blUTC ) {
-							objTime.utc = {
-									N: datNow.getDay() % 7,
-									j: datNow.getUTCDate(),
-									n: datNow.getUTCMonth() + 1,
-									Y: datNow.getUTCFullYear(),
-									G: datNow.getUTCHours(),
-									i: this.padLeft( datNow.getUTCMinutes(), 2, '0' ),
-									s: this.padLeft( datNow.getUTCSeconds(), 2, '0' ),
-									U: objTime.U,
-									u: datNow.getUTCMilliseconds()
-								};
-							objTime.utc.D = objNames.days[objTime.utc.N]['short'],
-							objTime.utc.l = objNames.days[objTime.utc.N]['long'],
-							objTime.utc.d = this.padLeft( objTime.utc.j, 2, '0' ),
-							objTime.utc.S = this.numberSuffix( objTime.utc.j ),
-							objTime.utc.m = this.padLeft( objTime.utc.n, 2, '0' ),
-							objTime.utc.F = objNames.months[objTime.utc.n]['long'],
-							objTime.utc.M = objNames.months[objTime.utc.n]['short'],
-							objTime.utc.y = this.padLeft( objTime.utc.Y, 2 ),
-							objTime.utc.H = this.padLeft( objTime.utc.G, 2, '0' ),
-							objTime.utc.g = ( objTime.utc.G > 12 ) ? objTime.utc.G - 12 : objTime.utc.G,
-							objTime.utc.h = this.padLeft( objTime.utc.g, 2, '0' ),
-							objTime.utc.a = ( objTime.utc.G < 12 ) ? 'am' : 'pm',
-							objTime.utc.A = objTime.utc.a.toUpperCase(),
-							objTime.utc.L = ( objTime.utc.Y % 4 === 0 && ( ( objTime.utc.Y % 100 === 0 && objTime.utc.Y % 400 === 0 ) || objTime.utc.Y % 100 !== 0 ) ) ? 1 : 0;
-						}
-						if( typeof strFormat === 'string' ) {
+						if( typeof strFormat !== '' ) {
 							var strOut = '';
 							var intChar = 0;
 							while( intChar < strFormat.length ) {
@@ -407,21 +372,13 @@
 									intChar++;
 									strOut += strFormat.substr( intChar, 1 );
 								} else if( strChar === 'r' ) {
-									if( blUTC ) {
-										strOut += objTime.utc.D + ', ' + objTime.utc.j + ' ' + objTime.utc.M + ' ' + objTime.utc.Y + ' ' + objTime.utc.H + ':' + objTime.utc.i + ':' + objTime.utc.s;
-									} else {
-										strOut += objTime.D + ', ' + objTime.j + ' ' + objTime.M + ' ' + objTime.Y + ' ' + objTime.H + ':' + objTime.i + ':' + objTime.s;
-									}
+									strOut += objTime.D + ', ' + objTime.j + ' ' + objTime.M + ' ' + objTime.Y + ' ' + objTime.H + ':' + objTime.i + ':' + objTime.s;
 								} else if( strChar === 'x' ) {
-									if( blUTC ) {
-										strOut += objTime.utc.Y + '-' + objTime.utc.m + '-' + objTime.utc.d + '\\T' + objTime.utc.H + ':' + objTime.utc.i + ':' + objTime.utc.s + '\\Z';
-									} else {
-										strOut += objTime.Y + '-' + objTime.m + '-' + objTime.d + '\\T' + objTime.H + ':' + objTime.i + ':' + objTime.s + '\\Z';
-									}
+									strOut += objTime.Y + '-' + objTime.m + '-' + objTime.d + '\\T' + objTime.H + ':' + objTime.i + ':' + objTime.s + '\\Z';
 								} else {
 									if( strChar !== ''
 											&& objTime.hasOwnProperty( strChar ) ) {
-										strOut += blUTC ? objTime.utc[strChar] : objTime[strChar];
+										strOut += objTime[strChar];
 									} else {
 										strOut += strChar;
 									}
@@ -618,7 +575,7 @@
 						return this.isIPV4( mxdValue ) || this.isIPV6( mxdValue );
 					},
 				this.isIPV4 = function( mxdValue ) {
-						return ( /^([0-9][0-9]?|(1[0-9]{2})|(2([0-4][0-9]|5[0-5])))(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){3}$/ ).test( mxdValue );
+						return ( /^(1?[0-9]{1,2}|2([0-4][0-9]|5[0-5]))(\.(1?[0-9]{1,2}|2([0-4][0-9]|5[0-5]))){3}$/ ).test( mxdValue );
 					},
 				this.isLocalIPV4 = function( mxdValue ) {
 						return ( /^10(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){3}|172\.(1[6-9]|2[0-9]|3[0-1])(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}|192\.168(\.((1[0-9]{2})|(2([0-4][0-9]|5[0-5]))|[0-9][0-9]?)){2}$/ ).test( mxdValue );
