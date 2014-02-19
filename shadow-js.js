@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.12.0
- * Date:        03/02/2014
+ * Version:     1.12.1
+ * Date:        19/02/2014
  * ================================================================================
  */
 
@@ -14,7 +14,7 @@
 				var arrThisVersion = [1, 12, 0],
 				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				blWindowFocused = false,
-				intYearDays = 356.2425;
+				fltYearDays = 356.2425;
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
 						if( ( typeof blCaseSensitive === 'boolean' )
 								&& blCaseSensitive ) {
@@ -784,7 +784,7 @@
 				this.prettyAge = function( intUnixSeconds ) {
 						var intSecondsDifference = parseInt( this.date( 'U' ) ) - intUnixSeconds,
 						blFuture = ( intSecondsDifference < 0 ),
-						intMonthSeconds = ( intYearDays / 12 ) * 86400;
+						intMonthSeconds = ( fltYearDays / 12 ) * 86400;
 						intSecondsDifference = Math.abs( intSecondsDifference );
 						var strOut = '';
 						if( intSecondsDifference < 60 ) {
@@ -803,12 +803,12 @@
 							strOut = Math.floor( intSecondsDifference / 86400 ) + ' days';
 						} else if( intSecondsDifference < intMonthSeconds * 2 ) {
 							return ( blFuture ) ? 'In a month' : 'A month ago';
-						} else if( intSecondsDifference < intYearDays * 86400 ) {
+						} else if( intSecondsDifference < fltYearDays * 86400 ) {
 							strOut = Math.floor( intSecondsDifference / intMonthSeconds ) + ' months';
-						} else if( intSecondsDifference < intYearDays * 86400 * 2 ) {
+						} else if( intSecondsDifference < fltYearDays * 86400 * 2 ) {
 							return ( blFuture ) ? 'In a year' : 'A year ago';
 						} else {
-							strOut = Math.floor( intSecondsDifference / ( intYearDays * 86400 ) ) + ' years';
+							strOut = Math.floor( intSecondsDifference / ( fltYearDays * 86400 ) ) + ' years';
 						}
 
 						return ( blFuture ) ? 'In ' + strOut : strOut + ' ago';
