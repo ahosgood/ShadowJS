@@ -3,15 +3,15 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.12.1
- * Date:        19/02/2014
+ * Version:     1.12.2
+ * Date:        21/02/2014
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
-				var arrThisVersion = [1, 12, 0],
+				var arrThisVersion = [1, 12, 2],
 				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				blWindowFocused = false,
 				fltYearDays = 356.2425;
@@ -822,14 +822,20 @@
 						}
 						return this.round( intBytes / Math.pow( 1024, intLimit ), 2 ) + ( typeof blUseSpace === 'boolean' && blUseSpace ? ' ' : '' ) + arrLimits[intLimit];
 					},
-				this.prettyTime = function( intSeconds ) {
+				this.prettyTime = function( intSeconds, blShortLabels ) {
+						blShortLabels = ( typeof blShortLabels === 'boolean' ) ? blShortLabels : false;
 						var strUptime = '',
 						arrLimits = [fltYearDays * 86400, ( fltYearDays / 84 ) * 604800, 604800, 86400, 3600, 60],
-						arrLimitLabels = ['year','month','week','day','hour','minute'];
+						arrLimitLabels = blShortLabels ? ['y', 'mo', 'w', 'd', 'h', 'm'] : ['year','month','week','day','hour','minute'];
 						for( var intLimitIndex in arrLimits ) {
 							if( intSeconds >= arrLimits[intLimitIndex] ) {
-								strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + ' ' + arrLimitLabels[intLimitIndex] + ( ( Math.floor( intSeconds / arrLimits[intLimitIndex] ) === 1 ) ? '' : 's' ) + ' ';
+								strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + ' ' + arrLimitLabels[intLimitIndex] + ( ( !blShortLabels && Math.floor( intSeconds / arrLimits[intLimitIndex] ) === 1 ) ? '' : 's' );
 								intSeconds -= Math.floor( intSeconds / arrLimits[intLimitIndex] ) * arrLimits[intLimitIndex];
+								if( intSeconds === 0 ) {
+									return strUptime;
+								} else {
+									strUptime += ' ';
+								}
 							} else if( strUptime !== '' ) {
 								strUptime += '0 ' + arrLimitLabels[intLimitIndex] + 's ';
 							}
