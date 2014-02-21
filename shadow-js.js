@@ -829,7 +829,11 @@
 						arrLimitLabels = blShortLabels ? ['y', 'mo', 'w', 'd', 'h', 'm'] : ['year','month','week','day','hour','minute'];
 						for( var intLimitIndex in arrLimits ) {
 							if( intSeconds >= arrLimits[intLimitIndex] ) {
-								strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + ' ' + arrLimitLabels[intLimitIndex] + ( ( !blShortLabels && Math.floor( intSeconds / arrLimits[intLimitIndex] ) === 1 ) ? '' : 's' );
+								if( blShortLabels ) {
+									strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + arrLimitLabels[intLimitIndex];
+								} else {
+									strUptime += Math.floor( intSeconds / arrLimits[intLimitIndex] ) + ' ' + arrLimitLabels[intLimitIndex] + ( ( Math.floor( intSeconds / arrLimits[intLimitIndex] ) === 1 ) ? '' : 's' );
+								}
 								intSeconds -= Math.floor( intSeconds / arrLimits[intLimitIndex] ) * arrLimits[intLimitIndex];
 								if( intSeconds === 0 ) {
 									return strUptime;
@@ -837,10 +841,21 @@
 									strUptime += ' ';
 								}
 							} else if( strUptime !== '' ) {
-								strUptime += '0 ' + arrLimitLabels[intLimitIndex] + 's ';
+								if( blShortLabels ) {
+									strUptime += '0' + arrLimitLabels[intLimitIndex];
+								} else {
+									strUptime += '0 ' + arrLimitLabels[intLimitIndex] + 's ';
+								}
+								if( intSeconds !== 0 ) {
+									strUptime += ' ';
+								}
 							}
 						}
-						return strUptime + intSeconds + ' seconds';
+						if( blShortLabels ) {
+							return strUptime + intSeconds + 's';
+						} else {
+							return strUptime + intSeconds + ' seconds';
+						}
 					},
 				this.radToDeg = function( intRadians ) {
 						return intRadians * ( 180 / Math.PI );
