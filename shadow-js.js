@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.12.2
- * Date:        21/02/2014
+ * Version:     1.13.0
+ * Date:        11/03/2014
  * ================================================================================
  */
 
@@ -199,6 +199,17 @@
 						}
 						this.cssAnimations = blAnimation ? function() { return true; } : function() { return false; };
 						return blAnimation;
+					},
+				this.cssTransforms = function() {
+						var blTransforms = false,
+						arrPrefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split( ' ' );
+						for( var intPrefix = 0; intPrefix < arrPrefixes.length; intPrefix++ ) {
+							if( document.createElement( 'div' ).style[arrPrefixes[intPrefix]] !== undefined ) {
+								blTransforms = arrPrefixes[intPrefix];
+							}
+						}
+						this.cssTransforms = function() { return blTransforms; };
+						return blTransforms;
 					},
 				this.dataSet = function( strName, mxdData, blPersistant ) {
 						if( !this.isSet( blPersistant ) ) {
