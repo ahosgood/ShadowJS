@@ -3,16 +3,15 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.13.0
- * Date:        11/03/2014
+ * Version:     1.14.0
+ * Date:        01/07/2014
  * ================================================================================
  */
 
 (
 	function( screen, window, document ) {
 		var Shadow = function() {
-				var arrThisVersion = [1, 12, 2],
-				base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+				var base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
 				blWindowFocused = false,
 				fltYearDays = 356.2425;
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
@@ -261,11 +260,13 @@
 								|| sessionStorage ) {
 							localStorage.clear();
 							sessionStorage.clear();
+						} else {
+							document.cookie.split( ';' );
 						}
 					},
-				this.date = function( strFormat ) {
+				this.date = function( strFormat, intUnixSeconds ) {
 						strFormat = ( typeof strFormat === 'string' ) ? strFormat : '';
-						var datNow = new Date(),
+						var datThisDate = this.isNumber( intUnixSeconds ) ? new Date( intUnixSeconds * 1000 ) : new Date(),
 						objNames = {
 								days: {
 										0: {
@@ -349,16 +350,16 @@
 									}
 								},
 						objTime = {
-								N: datNow.getDay() % 7,
-								j: datNow.getDate(),
-								n: datNow.getMonth() + 1,
-								Y: datNow.getFullYear(),
-								G: datNow.getHours(),
-								i: this.padLeft( datNow.getMinutes(), 2, '0' ),
-								s: this.padLeft( datNow.getSeconds(), 2, '0' ),
-								u: datNow.getMilliseconds(),
-								U: Math.floor( datNow.getTime() / 1000 ),
-								Z: datNow.getTimezoneOffset() * 3600
+								N: datThisDate.getDay() % 7,
+								j: datThisDate.getDate(),
+								n: datThisDate.getMonth() + 1,
+								Y: datThisDate.getFullYear(),
+								G: datThisDate.getHours(),
+								i: this.padLeft( datThisDate.getMinutes(), 2, '0' ),
+								s: this.padLeft( datThisDate.getSeconds(), 2, '0' ),
+								u: datThisDate.getMilliseconds(),
+								U: Math.floor( datThisDate.getTime() / 1000 ),
+								Z: datThisDate.getTimezoneOffset() * 3600
 							};
 						objTime.D = objNames.days[objTime.N]['short'],
 						objTime.l = objNames.days[objTime.N]['long'],
@@ -792,8 +793,8 @@
 					fltDiagPixels = Math.sqrt( Math.pow( intScreenWidth, 2 ) + Math.pow( intScreenHeight, 2 ) );
 					return intScreenHeight / fltDisplaySize * Math.sin( Math.acos( ( Math.pow( intScreenWidth, 2 ) + Math.pow( fltDiagPixels, 2 ) - Math.pow( intScreenHeight, 2 ) ) / ( 2 * fltDiagPixels * intScreenWidth ) ) );
 				},
-				this.prettyAge = function( intUnixSeconds ) {
-						var intSecondsDifference = parseInt( this.date( 'U' ) ) - intUnixSeconds,
+				this.prettyAge = function( intSeconds ) {
+						var intSecondsDifference = parseInt( this.date( 'U' ) ) - intSeconds,
 						blFuture = ( intSecondsDifference < 0 ),
 						intMonthSeconds = ( fltYearDays / 12 ) * 86400;
 						intSecondsDifference = Math.abs( intSecondsDifference );
@@ -821,7 +822,6 @@
 						} else {
 							strOut = Math.floor( intSecondsDifference / ( fltYearDays * 86400 ) ) + ' years';
 						}
-
 						return ( blFuture ) ? 'In ' + strOut : strOut + ' ago';
 					},
 				this.prettySize = function( intBytes, blUseSpace ) {
@@ -910,27 +910,6 @@
 							strTrimChars = ' ';
 						}
 						return this.ltrim( this.rtrim( strIn, strTrimChars ), strTrimChars );
-					},
-				this.version = function( mxdCheckVersion ) {
-						if( this.isSet( mxdCheckVersion ) ) {
-							if( typeof mxdCheckVersion === 'boolean' ) {
-								return mxdCheckVersion ? arrThisVersion : arrThisVersion.join( '.' );
-							} else if( typeof mxdCheckVersion === 'string' ) {
-								var arrCheckVersion = mxdCheckVersion.split( '.' );
-								for( var intVersionPart in arrThisVersion ) {
-									if( this.isSet( arrCheckVersion[intVersionPart] ) ) {
-										if( parseInt( arrThisVersion[intVersionPart] ) < parseInt( arrCheckVersion[intVersionPart] ) ) {
-											return false;
-										}
-									} else {
-										return true;
-									}
-								}
-								return true;
-							}
-						} else {
-							return arrThisVersion.join( '.' );
-						}
 					},
 				this.warn = function() {
 						if( arguments.length > 0 ) {
