@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.14.0
- * Date:        01/07/2014
+ * Version:     1.14.1
+ * Date:        04/07/2014
  * ================================================================================
  */
 
@@ -15,8 +15,7 @@
 				blWindowFocused = false,
 				fltYearDays = 356.2425;
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
-						if( ( typeof blCaseSensitive === 'boolean' )
-								&& blCaseSensitive ) {
+						if( blCaseSensitive === true ) {
 							strHaystack = strHaystack.toLowerCase();
 						}
 						var intIndex = strHaystack.lastIndexOf( strLastInstance );
@@ -112,8 +111,7 @@
 						return ( intRemainder ? strOut.slice( 0, intRemainder - 3 ) : strOut ) + '==='.slice( intRemainder || 3 );
 					},
 				this.beforeFirst = function( strFirstInstance, strHaystack, blCaseSensitive ) {
-						if( ( typeof blCaseSensitive === 'boolean' )
-								&& blCaseSensitive ) {
+						if( blCaseSensitive === true ) {
 							strHaystack = strHaystack.toLowerCase();
 						}
 						var intIndex = strHaystack.indexOf( strFirstInstance );
@@ -170,8 +168,7 @@
 						}
 					},
 				this.contains = function( strNeedle, strHaystack, blCaseSensitive ) {
-						blCaseSensitive = ( typeof blCaseSensitive === 'boolean' ) ? blCaseSensitive : false;
-						if( blCaseSensitive ) {
+						if( blCaseSensitive === true ) {
 							return strHaystack.indexOf( strNeedle ) !== -1;
 						} else {
 							return strHaystack.toLowerCase().indexOf( strNeedle.toLowerCase() ) !== -1;
@@ -424,8 +421,7 @@
 						return intDegrees * ( Math.PI / 180 );
 					},
 				this.endsWith = function( strNeedle, strHaystack, blCaseSensitive ) {
-						blCaseSensitive = ( typeof blCaseSensitive === 'boolean' ) ? blCaseSensitive : false;
-						if( blCaseSensitive ) {
+						if( blCaseSensitive === true ) {
 							return new RegExp( strNeedle + '$' ).test( strHaystack );
 						} else {
 							return new RegExp( strNeedle + '$', 'i' ).test( strHaystack );
@@ -474,9 +470,8 @@
 						}
 					},
 				this.getHash = function( blIncludeHash ) {
-						blIncludeHash = typeof blIncludeHash === 'boolean' ? blIncludeHash : false;
 						var strHash = window.location.hash;
-						return blIncludeHash? strHash : strHash.substring( 1 );
+						return ( blIncludeHash === true ) ? strHash : strHash.substring( 1 );
 					},
 				this.ie = function( mxdVersion ) {
 						var strUserAgent = navigator.userAgent,
@@ -650,7 +645,6 @@
 					},
 				this.moderniseInputs = function( blPlaceholders, funCallback ) {
 						funCallback = ( typeof funCallback === 'function' ) ? funCallback : ( ( typeof blPlaceholders === 'function' ) ? blPlaceholders : function() {} );
-						blPlaceholders = ( typeof blPlaceholders === 'boolean' ) ? blPlaceholders : true;
 						var blYeOldieBrowser = this.oldie();
 						var arrInputs = ['text', 'hidden', 'password', 'button', 'reset', 'submit', 'checkbox', 'radio', 'email', 'number', 'tel', 'url', 'range', 'search', 'file', 'color', 'date', 'month', 'week', 'time', 'datetime', 'datetime-local'];
 						for( var intInput in arrInputs ) {
@@ -658,7 +652,7 @@
 							$( 'input[type="' + strInput + '"]:not(.input-' + strInput + ')' ).addClass( 'input-' + strInput );
 						}
 						if( blYeOldieBrowser
-								&& blPlaceholders ) {
+								&& blPlaceholders === true ) {
 							$( 'input[placeholder]:not(.placeholder)' ).each(
 								function() {
 									var jqoInput = $( this );
@@ -692,7 +686,6 @@
 						funCallback.call();
 					},
 				this.numberSuffix = function( intNumber, blIncludeNumber ) {
-						blIncludeNumber = ( typeof blIncludeNumber === 'boolean' ) ? blIncludeNumber : false;
 						if( !this.isInt( intNumber ) ) {
 							intNumber = parseInt( intNumber );
 						}
@@ -718,7 +711,7 @@
 								strSuffix = 'th';
 							}
 						}
-						return strSuffix;
+						return ( blIncludeNumber === true ) ? intNumber + strSuffix : strSuffix;
 					},
 				this.objectLength = function( objIn ) {
 						var intLength = 0;
@@ -831,7 +824,7 @@
 								&& intBytes > Math.pow( 1024, intLimit + 1 ) ) {
 							intLimit++;
 						}
-						return this.round( intBytes / Math.pow( 1024, intLimit ), 2 ) + ( typeof blUseSpace === 'boolean' && blUseSpace ? ' ' : '' ) + arrLimits[intLimit];
+						return this.round( intBytes / Math.pow( 1024, intLimit ), 2 ) + ( blUseSpace === true ? ' ' : '' ) + arrLimits[intLimit];
 					},
 				this.prettyTime = function( intSeconds, blShortLabels ) {
 						blShortLabels = ( typeof blShortLabels === 'boolean' ) ? blShortLabels : false;
@@ -893,12 +886,11 @@
 				this.rtrim = function( strIn, strTrimChars ) {
 						return strIn.replace( new RegExp( '[' + ( ( typeof strTrimChars !== 'string' || strTrimChars === '' ) ? ' ' : strTrimChars ) + ']+$' ), '' );
 					},
-				this.slug = function( strOriginal ) {
-						return this.trim( strOriginal, ' -' ).replace( /[^a-z0-9\s\-_]/gi, '' ).replace( /\s{2,}/g, ' ' ).replace( /\s/g, '-' ).replace( /\-{2,}/g, '-' ).toLowerCase();
+				this.slug = function( strOriginal, blAllowSlashes ) {
+						return this.trim( strOriginal, ' -' ).replace( ( blAllowSlashes === true ? /[^a-z0-9\s\-_/]/gi : /[^a-z0-9\s\-_]/gi ), '' ).replace( /\s{2,}/g, ' ' ).replace( /\s/g, '-' ).replace( /\-{2,}/g, '-' ).toLowerCase();
 					},
 				this.startsWith = function( strNeedle, strHaystack, blCaseSensitive ) {
-						blCaseSensitive = ( typeof blCaseSensitive === 'boolean' ) ? blCaseSensitive : false;
-						if( blCaseSensitive ) {
+						if( blCaseSensitive === true ) {
 							return new RegExp( '^' + strNeedle ).test( strHaystack );
 						} else {
 							return new RegExp( '^' + strNeedle, 'i' ).test( strHaystack );
