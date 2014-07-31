@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.14.1
- * Date:        04/07/2014
+ * Version:     1.14.2
+ * Date:        31/07/2014
  * ================================================================================
  */
 
@@ -12,7 +12,6 @@
 	function( screen, window, document ) {
 		var Shadow = function() {
 				var base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-				blWindowFocused = false,
 				fltYearDays = 356.2425;
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
 						if( blCaseSensitive === true ) {
@@ -224,7 +223,7 @@
 							} catch( e ) {
 								switch( e ) {
 									case QUOTA_EXCEEDED_ERR:
-										error( 'Local storage quota exceeded' );
+										this.error( 'Local storage quota exceeded' );
 										break;
 								}
 							}
@@ -556,18 +555,38 @@
 								&& blShiftOn ) {
 							return true;
 						}
-						if( intCharCode >= 65
+						return ( intCharCode >= 65
 								&& intCharCode <= 90
-								&& !blShiftOn ) {
-							return true;
-						}
-						return false;
+								&& !blShiftOn );
 					},
 				this.isDomain = function( mxdValue ) {
 						return ( /^([a-z0-9][a-z0-9\-]*)(.[a-z0-9]{2,}[a-z0-9\-]*)+$/i ).test(  mxdValue );
 					},
 				this.isEmail = function( mxdValue ) {
-						return ( /^([a-z0-9])(([-a-z0-9._])*([a-z0-9]))*\@([a-z0-9])(([a-z0-9-])*([a-z0-9]))+(\.([a-z0-9])([-a-z0-9_-])?([a-z0-9])+)+$/ ).test( mxdValue );
+						/**
+						 * JavaScript function to check an email address conforms to RFC822 (http://www.ietf.org/rfc/rfc0822.txt)
+						 *
+						 * Version: 0.2
+						 * Author: Ross Kendall
+						 * Created: 2006-12-16
+						 * Updated: 2007-03-22
+						 *
+						 * Based on the PHP code by Cal Henderson
+						 * http://iamcal.com/publish/articles/php/parsing_email/
+						 */
+						var sQtext = '[^\\x0d\\x22\\x5c\\x80-\\xff]',
+						sDtext = '[^\\x0d\\x5b-\\x5d\\x80-\\xff]',
+						sAtom = '[^\\x00-\\x20\\x22\\x28\\x29\\x2c\\x2e\\x3a-\\x3c\\x3e\\x40\\x5b-\\x5d\\x7f-\\xff]+',
+						sQuotedPair = '\\x5c[\\x00-\\x7f]',
+						sDomainLiteral = '\\x5b(' + sDtext + '|' + sQuotedPair + ')*\\x5d',
+						sQuotedString = '\\x22(' + sQtext + '|' + sQuotedPair + ')*\\x22',
+						sSubDomain = '(' + sAtom + '|' + sDomainLiteral + ')',
+						sWord = '(' + sAtom + '|' + sQuotedString + ')',
+						sDomain = sSubDomain + '(\\x2e' + sSubDomain + ')*',
+						sLocalPart = sWord + '(\\x2e' + sWord + ')*',
+						sAddrSpec = sLocalPart + '\\x40' + sDomain,
+						sValidEmail = '^' + sAddrSpec + '$';
+						return new RegExp( sValidEmail ).test( mxdValue );
 					},
 				this.isHexadecimal = function( mxdValue ) {
 						return ( /^[0-9a-f]+$/i ).test( mxdValue );
@@ -611,7 +630,7 @@
 						return blResult;
 					},
 				this.isWindowFocused = function() {
-						return blWindowFocused;
+						return this.windowFocused;
 					},
 				this.keyCodeName = function( e ) {
 						e = e ? e : window.event;
@@ -909,17 +928,18 @@
 								this.console( 'warn', arguments[intArguement] );
 							}
 						}
-					};
+					},
+				this.windowFocused = false;
 
 				return this;
 			};
 
 		window.Shadow = new Shadow;
 		window.onfocus = function() {
-				blWindowFocused = true;
+				window.Shadow.windowFocused = true;
 			},
 		window.onblur = function() {
-				blWindowFocused = false;
+				window.Shadow.windowFocused = false;
 			};
 
 		if( !window.shdw ) {
