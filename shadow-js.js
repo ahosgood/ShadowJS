@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.14.2
- * Date:        31/07/2014
+ * Version:     1.15.0
+ * Date:        13/08/2014
  * ================================================================================
  */
 
@@ -115,6 +115,27 @@
 						}
 						var intIndex = strHaystack.indexOf( strFirstInstance );
 						return ( intIndex > 0 ) ? strHaystack.slice( 0, intIndex ) : '';
+					},
+				this.browserMinimumFontSize = function() {
+						var domElement = document.createElement( 'div' );
+						document.body.appendChild( domElement );
+						domElement.innerHTML = 'abcdefghijklmnopqrstuvwxyz0123456789';
+						domElement.style.fontSize = '1px';
+						domElement.style.lineHeight = '100%';
+						var intMinimum = domElement.offsetHeight,
+								intHeight = intMinimum,
+								intSize = 1;
+
+						while( intHeight < intMinimum ) {
+							intSize++;
+							domElement.style.fontSize = intSize + 'px';
+							intMinimum = domElement.offsetHeight;
+						}
+
+						domElement.remove();
+
+						this.browserMinimumFontSize = function() { return intMinimum };
+						return intHeight;
 					},
 				this.cookieDelete = function( strName ) {
 						var datNow = new Date();
