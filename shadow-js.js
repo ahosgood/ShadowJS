@@ -3,8 +3,8 @@
  * Shadow JS
  * --------------------------------------------------------------------------------
  * Author:      Andrew Hosgood
- * Version:     1.15.0
- * Date:        13/08/2014
+ * Version:     1.16.0
+ * Date:        22/08/2014
  * ================================================================================
  */
 
@@ -12,7 +12,9 @@
 	function( screen, window, document ) {
 		var Shadow = function() {
 				var base64String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-				fltYearDays = 356.2425;
+						fltYearDays = 356.2425,
+						objGetParams = {}
+
 				this.afterLast = function( strLastInstance, strHaystack, blCaseSensitive ) {
 						if( blCaseSensitive === true ) {
 							strHaystack = strHaystack.toLowerCase();
@@ -46,9 +48,9 @@
 							// +      input by: Brett Zamir (http://brett-zamir.me)
 							// +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
 							var strOctet1, strOctet2, strOctet3, strHextet1, strHextet2, strHextet3, strHextet4, intBits,
-								intChar = 0,
-								intOutChar = 0,
-								arrOut = [];
+									intChar = 0,
+									intOutChar = 0,
+									arrOut = [];
 							if( !strIn ) {
 								return strIn;
 							}
@@ -87,9 +89,9 @@
 							// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
 							// +   improved by: Rafał Kukawski (http://kukawski.pl)
 							var strOctet1, strOctet2, strOctet3, strHextet1, strHextet2, strHextet3, strHextet4, intBits,
-								intChar = 0,
-								intOutChar = 0,
-								arrOut = [];
+									intChar = 0,
+									intOutChar = 0,
+									arrOut = [];
 							if( !strIn ) {
 								return strIn;
 							}
@@ -125,15 +127,12 @@
 						var intMinimum = domElement.offsetHeight,
 								intHeight = intMinimum,
 								intSize = 1;
-
 						while( intHeight < intMinimum ) {
 							intSize++;
 							domElement.style.fontSize = intSize + 'px';
 							intMinimum = domElement.offsetHeight;
 						}
-
 						domElement.remove();
-
 						this.browserMinimumFontSize = function() { return intMinimum };
 						return intHeight;
 					},
@@ -465,28 +464,24 @@
 							jqoObject[0].webkitRequestFullScreen();
 						}
 					},
-				this.getFileHeaders = function( strResource, funCallback ) {
-						var resXHR;
-						if( window.XMLHttpRequest ) {
-							resXHR = new XMLHttpRequest();
-						} else if( window.ActiveXObject ) {
-							resXHR = new ActiveXObject( 'Microsoft.XMLHTTP' );
-						}
-						resXHR.onreadystatechange = function() {
-							if( resXHR.readyState === 4
-									&& resXHR.status === 200 ) {
-								var arrResourceResponseHeaders = new Object();
-								arrResourceResponseHeaders.Type = resXHR.getResponseHeader( 'Content-Type' ).toString();
-								arrResourceResponseHeaders.Size = resXHR.getResponseHeader( 'Content-Length' ).toString();
-								arrResourceResponseHeaders.Modified = resXHR.getResponseHeader( 'Last-Modified' ).toString();
-								funCallback.call( arrResourceResponseHeaders );
+				this.get = function( strKey ) {
+						if( !objGetParams.length ) {
+							var arrArguements = location.search.substr( 1 ).split( /&/ );
+							for( var intArguement = 0; intArguement < arrArguements.length; intArguement++ ) {
+								var mxdTemp = arrArguements[intArguement].split( /=/ );
+								if( mxdTemp[0] !== '' ) {
+									objGetParams[decodeURIComponent( mxdTemp[0] )] = decodeURIComponent( mxdTemp.slice( 1 ).join( '' ).replace( '+', ' ' ) );
+								}
 							}
 						}
-						try {
-							resXHR.open( 'HEAD', strResource, true );
-							resXHR.send();
-						} catch( e ) {
-							error( e );
+						if( strKey ) {
+							if( objGetParams[strKey] ) {
+								return objGetParams[strKey];
+							} else {
+								return null;
+							}
+						} else {
+							return objGetParams;
 						}
 					},
 				this.getHash = function( blIncludeHash ) {
