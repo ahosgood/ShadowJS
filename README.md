@@ -9,14 +9,14 @@ window.Shadow and window.shdw objects created upon inclusion
 All functions and properties can be called from the window Shadow object using either Shadow.function() or shdw.function()
 
 
-| Function               | Result | Returns |
-| ---------------------- | ------ | ------- |
-| afterLast              |
-| arrayToObject          |
-| base64Decode           |
-| base64Encode           |
-| beforeFirst            |
-| browserMinimumFontSize |
+| Function               | Result | Return Type | Details |
+| ---------------------- | ------ | ----------- | ------- |
+| afterLast              | Returns the characters after the last instance of a character | `string` | |
+| arrayToObject          | Converts an array to an object | `object` | |
+| base64Decode           | Base64 decode a string | `string` | |
+| base64Encode           | Base64 encode a string | `string` | |
+| beforeFirst            | Returns the characters before the first instance of a character | `string` | |
+| browserMinimumFontSize | Finds the minimum font size (in px) that the browser can render | `integer` | |
 | cookieDelete           |
 | cookieGet              |
 | cookieSet              |
