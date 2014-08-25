@@ -1,6 +1,6 @@
-#Shadow JS
+#ShadowJS
 
-Shadow JS provides you with all the JavaScript functionality that everyone else forgot to build
+ShadowJS provides you with all the JavaScript functionality that everyone else forgot to build
 
 ##Initialisation
 window.Shadow and window.shdw objects created upon inclusion
